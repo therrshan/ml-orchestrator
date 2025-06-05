@@ -1,0 +1,34 @@
+name: "mnist_classification_pipeline"
+description: "MNIST digit classification using PyTorch"
+version: "1.0"
+author: "ML Team"
+tags: ["computer-vision", "classification", "mnist", "pytorch"]
+
+tasks:
+  - name: "fetch_mnist_data"
+    command: "python scripts/fetch_mnist.py --output data/raw/"
+    timeout: 300
+    
+  - name: "preprocess_data"
+    command: "python scripts/preprocess_mnist.py --input data/raw/ --output data/processed/"
+    depends_on: ["fetch_mnist_data"]
+    timeout: 300
+    
+  - name: "train_pytorch_model"
+    command: "python scripts/train_pytorch_mnist.py --data data/processed/ --model models/mnist_pytorch.pth --epochs ${EPOCHS:-5}"
+    depends_on: ["preprocess_data"]
+    timeout: 600
+    retry_count: 1
+    environment:
+      BATCH_SIZE: "64"
+      LEARNING_RATE: "0.001"
+    
+  - name: "evaluate_model"
+    command: "python scripts/evaluate_pytorch_mnist.py --model models/mnist_pytorch.pth --test data/processed/test.npz --output results/"
+    depends_on: ["train_pytorch_model"]
+    timeout: 300
+    
+  - name: "generate_report"
+    command: "python scripts/create_mnist_report.py --results results/ --output reports/mnist_report.html"
+    depends_on: ["evaluate_model"]
+    timeout: 120
