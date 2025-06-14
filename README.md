@@ -59,72 +59,6 @@ ml-orchestrator resume ml_training_pipeline  # Resume if failed
 ml-orchestrator list  # Show all pipelines
 ```
 
-## 🎯 Real-World Example: MNIST Classification
-
-Included is a complete computer vision pipeline that:
-- Downloads 70,000 MNIST images
-- Trains a PyTorch CNN model  
-- Achieves 95%+ accuracy
-- Generates comprehensive HTML reports
-
-```bash
-# Run the MNIST example
-ml-orchestrator run examples/mnist_pipeline.yml
-```
-
-## 🔧 Advanced Features
-
-### Environment Variables & Configuration
-
-```yaml
-tasks:
-  - name: "train"
-    command: "python train.py --epochs ${EPOCHS:-10} --lr ${LR:-0.001}"
-    environment:
-      CUDA_VISIBLE_DEVICES: "0"
-      MODEL_TYPE: "cnn"
-```
-
-### Error Handling & Retries
-
-```yaml
-tasks:
-  - name: "flaky_task"
-    command: "python unreliable_script.py"
-    retry_count: 3
-    timeout: 1800
-```
-
-### State Management
-
-```python
-# Resume failed pipelines
-pipeline = Pipeline.from_state('my_pipeline')
-pipeline.run(resume=True)
-
-# Check detailed status
-status = pipeline.get_status()
-print(f"Progress: {status['completed_tasks']}/{status['total_tasks']}")
-```
-
-## 💡 Why ML Pipeline Orchestrator?
-
-**vs Apache Airflow:**
-- ✅ 5-minute setup vs hours of configuration
-- ✅ Lightweight - no web server or database required
-- ✅ Built specifically for ML workflows
-
-**vs Manual Scripts:**
-- ✅ Automatic dependency resolution
-- ✅ Resume failed pipelines without starting over
-- ✅ Built-in error handling and logging
-- ✅ Professional execution tracking
-
-**vs Other Tools:**
-- ✅ No cloud lock-in
-- ✅ Works with any Python environment
-- ✅ Integrates with existing codebases
-
 ## 📋 Configuration Reference
 
 ### Task Options
@@ -152,54 +86,6 @@ tasks:
   # ... task definitions
 ```
 
-## 🛠️ Integration Examples
-
-### With Jupyter Notebooks
-
-```yaml
-tasks:
-  - name: "data_analysis"
-    command: "jupyter nbconvert --execute analysis.ipynb"
-```
-
-### With Docker
-
-```yaml
-tasks:
-  - name: "containerized_training"
-    command: "docker run --rm -v $(pwd):/app my-ml-image python train.py"
-```
-
-### With Cloud Services
-
-```yaml
-tasks:
-  - name: "upload_model"
-    command: "aws s3 cp model.pkl s3://my-bucket/models/"
-    depends_on: ["train_model"]
-```
-
-## 📊 Monitoring & Debugging
-
-### Execution Tracking
-
-```python
-# Get detailed execution info
-for task_name in pipeline.tasks:
-    task_status = pipeline.get_task_status(task_name)
-    print(f"{task_name}: {task_status['status']}")
-```
-
-### Logging & Debugging
-
-```bash
-# Run with debug logging
-ml-orchestrator --log-level DEBUG run my_pipeline.yml
-
-# Save logs to file
-ml-orchestrator --log-file pipeline.log run my_pipeline.yml
-```
-
 ## 🎓 Use Cases
 
 - **Model Training Pipelines** - Automate data → preprocess → train → evaluate workflows
@@ -209,24 +95,12 @@ ml-orchestrator --log-file pipeline.log run my_pipeline.yml
 - **Hyperparameter Tuning** - Coordinate multiple training experiments
 - **A/B Testing** - Manage parallel model training and comparison
 
-## 🤝 Contributing
-
-We welcome contributions! The orchestrator is designed to be:
-- **Simple** - Easy to understand and extend
-- **Reliable** - Thoroughly tested with real ML workloads
-- **Practical** - Solves actual problems ML teams face
-
 ## 📜 License
 
 MIT License - feel free to use in commercial and open-source projects.
 
 ## 🔗 Links
 
-- **Documentation**: [GitHub README](https://github.com/yourusername/ml-orchestrator)
-- **Examples**: Complete MNIST pipeline included
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ml-orchestrator/issues)
 - **PyPI**: [ml-pipeline-orchestrator](https://pypi.org/project/ml-pipeline-orchestrator/)
 
 ---
-
-**Built by ML engineers, for ML engineers.** Transform your scripts into production-ready pipelines in minutes, not hours.
