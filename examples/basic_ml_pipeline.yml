@@ -1,0 +1,42 @@
+name: "basic_ml_training_pipeline"
+description: "A simple ML training pipeline example"
+version: "1.0"
+author: "ML Team"
+tags: ["training", "example"]
+
+tasks:
+  - name: "fetch_data"
+    command: "python scripts/fetch_data.py --output data/raw/ --date ${DATE:-2024-01-01}"
+    retry_count: 2
+    timeout: 300
+    environment:
+      DATA_SOURCE: "production"
+      LOG_LEVEL: "INFO"
+  
+  - name: "validate_data"
+    command: "python scripts/validate_data.py --input data/raw/ --output data/validated/"
+    depends_on: ["fetch_data"]
+    retry_count: 1
+    
+  - name: "preprocess_features"
+    command: "python scripts/preprocess.py --input data/validated/ --output data/processed/"
+    depends_on: ["validate_data"]
+    working_dir: "."
+    timeout: 600
+    
+  - name: "train_model"
+    command: "python scripts/train_model.py --data data/processed/ --model models/model.pkl --epochs ${EPOCHS:-10}"
+    depends_on: ["preprocess_features"]
+    retry_count: 3
+    timeout: 3600
+    environment:
+      CUDA_VISIBLE_DEVICES: "0"
+      
+  - name: "evaluate_model"
+    command: "python scripts/evaluate.py --model models/model.pkl --test data/processed/test.csv --output results/"
+    depends_on: ["train_model"]
+    
+  - name: "generate_report"
+    command: "python scripts/generate_report.py --results results/ --output reports/training_report.html"
+    depends_on: ["evaluate_model"]
+    timeout: 120
