@@ -1,0 +1,158 @@
+{
+  "name": "local_test_pipeline",
+  "status": "success",
+  "created_at": "2025-06-14T10:40:27.242094",
+  "last_updated": "2025-06-14T10:40:27.242152",
+  "metadata": {
+    "name": "local_test_pipeline",
+    "description": "Local test pipeline",
+    "version": "1.0",
+    "author": "",
+    "tags": []
+  },
+  "tasks": {
+    "fetch_data": {
+      "name": "fetch_data",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/fetch_data.py --output /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw/",
+      "depends_on": [],
+      "retry_count": 0,
+      "timeout": 60,
+      "working_dir": null,
+      "environment": {
+        "DATE": "2024-01-01",
+        "DATA_SOURCE": "test"
+      },
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "🚀 Starting data fetch script\n📅 Date: 2024-01-01\n🎯 Log level: INFO\n🔄 Fetching data for date: 2024-01-01\n📊 Data source: test\n📁 Output directory: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw\n⏳ Connecting to data source...\n✅ Successfully fetched 492 records\n💾 Data saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw/raw_data.json\n📋 Metadata saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw/metadata.json\n🎉 Data fetch completed successfully!\n",
+        "stderr": "",
+        "execution_time": 2.035388,
+        "start_time": "2025-06-14T10:40:24.376292",
+        "end_time": "2025-06-14T10:40:26.411680"
+      }
+    },
+    "validate_data": {
+      "name": "validate_data",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/validate_data.py --input /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw/ --output /tmp/ml_orchestrator_local_test_ik6kvpb0/data/validated/",
+      "depends_on": [
+        "fetch_data"
+      ],
+      "retry_count": 0,
+      "timeout": 60,
+      "working_dir": null,
+      "environment": {},
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "🔍 Starting data validation script\n🔍 Validating data from: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/raw\n📊 Loaded 492 records\n✅ Data validation completed\n📈 Records: 492 → 492\n💾 Validated data saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/validated/validated_data.json\n📋 Validation report saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/validated/validation_report.json\n🎉 Data validation completed successfully!\n",
+        "stderr": "",
+        "execution_time": 0.034218,
+        "start_time": "2025-06-14T10:40:26.513267",
+        "end_time": "2025-06-14T10:40:26.547485"
+      }
+    },
+    "preprocess_features": {
+      "name": "preprocess_features",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/preprocess.py --input /tmp/ml_orchestrator_local_test_ik6kvpb0/data/validated/ --output /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/",
+      "depends_on": [
+        "validate_data"
+      ],
+      "retry_count": 0,
+      "timeout": 120,
+      "working_dir": null,
+      "environment": {},
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "⚙️  Starting preprocessing script\n⚙️  Processing data from: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/validated\n📊 Processing 492 records\n🔧 Engineering features...\n📏 Normalizing features...\n✂️  Splitting data (test ratio: 0.2)\n📊 Train samples: 393\n📊 Test samples: 99\n✅ Preprocessing completed\n💾 Processed data saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/processed_data.json\n🚂 Training data: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/train.json\n🧪 Test data: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/test.json\n🎉 Preprocessing completed successfully!\n",
+        "stderr": "",
+        "execution_time": 0.062047,
+        "start_time": "2025-06-14T10:40:26.648967",
+        "end_time": "2025-06-14T10:40:26.711014"
+      }
+    },
+    "train_model": {
+      "name": "train_model",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/train_model.py --data /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/ --model /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.pkl --epochs 2",
+      "depends_on": [
+        "preprocess_features"
+      ],
+      "retry_count": 1,
+      "timeout": 180,
+      "working_dir": null,
+      "environment": {},
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "🤖 Starting model training script\n📊 Data directory: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/\n💾 Model path: /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.pkl\n🔄 Epochs: 2\n🖥️  CUDA devices: not set\n🤖 Training model from data in: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed\n📊 Training samples: 393\n🎯 Features used: 9\n🏷️  Target distribution: 191/393 positive\n🏋️  Training model with 393 samples, 9 features\nIteration 0: loss=0.6951, accuracy=0.4707\nIteration 1: loss=0.6950, accuracy=0.4682\nIteration 2: loss=0.6950, accuracy=0.4656\nIteration 3: loss=0.6949, accuracy=0.4656\nIteration 4: loss=0.6949, accuracy=0.4656\nIteration 5: loss=0.6949, accuracy=0.4656\nIteration 6: loss=0.6948, accuracy=0.4656\nIteration 7: loss=0.6948, accuracy=0.4580\nIteration 8: loss=0.6947, accuracy=0.4580\nIteration 9: loss=0.6947, accuracy=0.4580\n✅ Training completed after 20 iterations\n\n📊 Feature Importance:\n   feature_2_norm: 0.0848\n   feature_3_B: 0.0810\n   feature_3_A: 0.0778\n   feature_2_abs_norm: 0.0569\n   feature_interaction_norm: 0.0474\n\n📈 Training Accuracy: 0.4606\n💾 Model saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.pkl\n📋 Model metadata saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.json\n🎉 Model training completed successfully!\n",
+        "stderr": "",
+        "execution_time": 0.066489,
+        "start_time": "2025-06-14T10:40:26.812128",
+        "end_time": "2025-06-14T10:40:26.878617"
+      }
+    },
+    "evaluate_model": {
+      "name": "evaluate_model",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/evaluate.py --model /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.pkl --test /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/processed_data.json --output /tmp/ml_orchestrator_local_test_ik6kvpb0/results/",
+      "depends_on": [
+        "train_model"
+      ],
+      "retry_count": 0,
+      "timeout": 60,
+      "working_dir": null,
+      "environment": {},
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "📊 Starting model evaluation script\n📊 Evaluating model: /tmp/ml_orchestrator_local_test_ik6kvpb0/models/model.pkl\n🧪 Test data: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/processed_data.json\n🤖 Model type: SimpleLogisticRegression\n🏋️  Training accuracy: 0.4606\n📁 Loading test data from: /tmp/ml_orchestrator_local_test_ik6kvpb0/data/processed/processed_data.json\n📊 Found test_features with 99 samples\n🧪 Test samples: 99\n🔮 Making predictions...\n\n📈 Evaluation Results:\n   Accuracy:  0.5455\n   Precision: 0.6327\n   Recall:    0.5345\n   F1 Score:  0.5794\n   Log Loss:  0.6923\n\n📊 Confusion Matrix:\n   True Positive:  31\n   True Negative:  23\n   False Positive: 18\n   False Negative: 27\n\n🎯 Top Feature Importance:\n   feature_2_norm: 0.0848\n   feature_3_B: 0.0810\n   feature_3_A: 0.0778\n   feature_2_abs_norm: 0.0569\n   feature_interaction_norm: 0.0474\n\n💾 Evaluation results saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/results/evaluation_results.json\n🔮 Predictions saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/results/predictions.json\n🎉 Model evaluation completed successfully!\n",
+        "stderr": "",
+        "execution_time": 0.031637,
+        "start_time": "2025-06-14T10:40:26.979842",
+        "end_time": "2025-06-14T10:40:27.011479"
+      }
+    },
+    "generate_report": {
+      "name": "generate_report",
+      "command": "python /tmp/ml_orchestrator_local_test_ik6kvpb0/scripts/generate_report.py --results /tmp/ml_orchestrator_local_test_ik6kvpb0/results/ --output /tmp/ml_orchestrator_local_test_ik6kvpb0/reports/report.html",
+      "depends_on": [
+        "evaluate_model"
+      ],
+      "retry_count": 0,
+      "timeout": 60,
+      "working_dir": null,
+      "environment": {},
+      "status": "success",
+      "current_attempt": 0,
+      "error_message": null,
+      "result": {
+        "exit_code": 0,
+        "stdout": "📊 Starting report generation script\n📁 Results directory: /tmp/ml_orchestrator_local_test_ik6kvpb0/results/\n📄 Output file: /tmp/ml_orchestrator_local_test_ik6kvpb0/reports/report.html\n✅ Loaded results: ['evaluation', 'predictions']\n🎉 Report generated successfully!\n📄 HTML report saved to: /tmp/ml_orchestrator_local_test_ik6kvpb0/reports/report.html\n🌐 Open in browser: file:///tmp/ml_orchestrator_local_test_ik6kvpb0/reports/report.html\n",
+        "stderr": "",
+        "execution_time": 0.027714,
+        "start_time": "2025-06-14T10:40:27.113191",
+        "end_time": "2025-06-14T10:40:27.140905"
+      }
+    }
+  },
+  "execution_history": [],
+  "completed_tasks": [
+    "train_model",
+    "fetch_data",
+    "validate_data",
+    "preprocess_features",
+    "generate_report",
+    "evaluate_model"
+  ],
+  "failed_tasks": []
+}

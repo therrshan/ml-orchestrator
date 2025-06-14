@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST Classification Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #34495e;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .confusion-matrix {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        .cm-table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            background: white;
+        }
+        .cm-table th, .cm-table td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: center;
+            min-width: 40px;
+        }
+        .cm-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        .class-performance {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .class-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .class-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .digit-label {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .accuracy-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .progress-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .class-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .training-history {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .progress-chart {
+            margin-top: 15px;
+        }
+        .epoch-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .epoch-label {
+            width: 80px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .acc-bars {
+            flex: 1;
+            margin-left: 15px;
+        }
+        .train-bar, .val-bar {
+            position: relative;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-bottom: 5px;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+        .bar-label {
+            position: absolute;
+            right: 5px;
+            top: 2px;
+            font-size: 0.8em;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .info-table th, .info-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .info-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 MNIST Classification Report</h1>
+            <p>Generated on 2025-06-14 10:42:19</p>
+        </div>
+
+        <div class="section">
+            <h2>📊 Overall Performance</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">0.990</div>
+                    <div class="metric-label">Test Accuracy</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.990</div>
+                    <div class="metric-label">Avg Precision</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.990</div>
+                    <div class="metric-label">Avg Recall</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.990</div>
+                    <div class="metric-label">Avg F1-Score</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">10,000</div>
+                    <div class="metric-label">Test Samples</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.992</div>
+                    <div class="metric-label">Avg Confidence</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔢 Per-Digit Performance</h2>
+            <div class="class-performance">
+
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 0</span>
+                <span class="accuracy-value">0.994</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.38775510204081%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.994</span>
+                <span>Recall: 0.994</span>
+                <span>F1: 0.994</span>
+                <span>Support: 980.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 1</span>
+                <span class="accuracy-value">0.994</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.38325991189427%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.995</span>
+                <span>Recall: 0.994</span>
+                <span>F1: 0.994</span>
+                <span>Support: 1135.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 2</span>
+                <span class="accuracy-value">0.992</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.2248062015504%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.993</span>
+                <span>Recall: 0.992</span>
+                <span>F1: 0.993</span>
+                <span>Support: 1032.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 3</span>
+                <span class="accuracy-value">0.998</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.8019801980198%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.973</span>
+                <span>Recall: 0.998</span>
+                <span>F1: 0.985</span>
+                <span>Support: 1010.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 4</span>
+                <span class="accuracy-value">0.985</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98.4725050916497%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.997</span>
+                <span>Recall: 0.985</span>
+                <span>F1: 0.991</span>
+                <span>Support: 982.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 5</span>
+                <span class="accuracy-value">0.981</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98.09417040358744%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.993</span>
+                <span>Recall: 0.981</span>
+                <span>F1: 0.987</span>
+                <span>Support: 892.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 6</span>
+                <span class="accuracy-value">0.989</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98.8517745302714%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.990</span>
+                <span>Recall: 0.989</span>
+                <span>F1: 0.989</span>
+                <span>Support: 958.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 7</span>
+                <span class="accuracy-value">0.991</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.12451361867704%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.987</span>
+                <span>Recall: 0.991</span>
+                <span>F1: 0.989</span>
+                <span>Support: 1028.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 8</span>
+                <span class="accuracy-value">0.984</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 98.35728952772074%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.998</span>
+                <span>Recall: 0.984</span>
+                <span>F1: 0.991</span>
+                <span>Support: 974.0</span>
+            </div>
+        </div>
+        
+        <div class="class-item">
+            <div class="class-header">
+                <span class="digit-label">Digit 9</span>
+                <span class="accuracy-value">0.990</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99.00891972249752%; background-color: #28a745;"></div>
+            </div>
+            <div class="class-metrics">
+                <span>Precision: 0.980</span>
+                <span>Recall: 0.990</span>
+                <span>F1: 0.985</span>
+                <span>Support: 1009.0</span>
+            </div>
+        </div>
+        </div>
+
+        </div>
+
+        <div class="section">
+            <h2>🎯 Confusion Matrix</h2>
+            <p>Darker colors indicate higher values. Green diagonal shows correct predictions, red off-diagonal shows misclassifications.</p>
+            <div class="confusion-matrix">
+<table class="cm-table">
+<tbody><tr><th></th><th>Pred 0</th><th>Pred 1</th><th>Pred 2</th><th>Pred 3</th><th>Pred 4</th><th>Pred 5</th><th>Pred 6</th><th>Pred 7</th><th>Pred 8</th><th>Pred 9</th></tr>
+<tr><th>True 0</th><td style="background-color: rgba(40, 167, 69, 0.8907801418439718);">974</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10283687943262412);">4</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td></tr>
+<tr><th>True 1</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 1.0);">1128</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1021276595744681);">3</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td></tr>
+<tr><th>True 2</th><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.9262411347517732);">1024</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10354609929078015);">5</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td></tr>
+<tr><th>True 3</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.9148936170212767);">1008</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td></tr>
+<tr><th>True 4</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.8858156028368795);">967</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10851063829787234);">12</td></tr>
+<tr><th>True 5</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10780141843971631);">11</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.8205673758865248);">875</td><td style="background-color: rgba(220, 53, 69, 0.10283687943262412);">4</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td></tr>
+<tr><th>True 6</th><td style="background-color: rgba(220, 53, 69, 0.1021276595744681);">3</td><td style="background-color: rgba(220, 53, 69, 0.1021276595744681);">3</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(40, 167, 69, 0.871631205673759);">947</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td></tr>
+<tr><th>True 7</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.9226950354609931);">1019</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1021276595744681);">3</td></tr>
+<tr><th>True 8</th><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.10425531914893618);">6</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10070921985815603);">1</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.8794326241134753);">958</td><td style="background-color: rgba(220, 53, 69, 0.10283687943262412);">4</td></tr>
+<tr><th>True 9</th><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10283687943262412);">4</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(220, 53, 69, 0.10141843971631206);">2</td><td style="background-color: rgba(220, 53, 69, 0.1);">0</td><td style="background-color: rgba(40, 167, 69, 0.9085106382978723);">999</td></tr>
+</tbody></table>
+</div>
+
+        </div>
+
+        <div class="section">
+            <h2>🏋️ Training Information</h2>
+            <p>Training history not available.</p>
+            
+            <h3>Model Details</h3>
+            <table class="info-table">
+                <tbody><tr><th>Architecture</th><td>SimpleCNN</td></tr>
+                <tr><th>Parameters</th><td>130,890</td></tr>
+                <tr><th>Epochs Trained</th><td>5</td></tr>
+                <tr><th>Batch Size</th><td>64</td></tr>
+                <tr><th>Learning Rate</th><td>0.001</td></tr>
+                <tr><th>Device</th><td>cuda</td></tr>
+                <tr><th>Final Train Acc</th><td>98.62%</td></tr>
+                <tr><th>Final Val Acc</th><td>98.78%</td></tr>
+            </tbody></table>
+        </div>
+
+        <div class="section">
+            <h2>💡 Analysis</h2>
+            <div class="highlight">
+
+                <p>🎉 <strong>Excellent Performance!</strong> The model achieved 99.0% accuracy on MNIST test set.</p>
+                <ul>
+                    <li><strong>Best recognized digit:</strong> 3 (99.8% accuracy)</li>
+                    <li><strong>Most challenging digit:</strong> 5 (98.1% accuracy)</li>
+                    <li><strong>Model confidence:</strong> Average confidence of 99.2%</li>
+                    <li><strong>Training efficiency:</strong> Achieved 98.8% validation accuracy in 5 epochs</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #6c757d; font-size: 0.9em;">
+            <p>Report generated by ML Pipeline Orchestrator - MNIST Classification Pipeline</p>
+        </div>
+    </div>
+
+
+</body></html>
