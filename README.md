@@ -1,6 +1,6 @@
 # ML Pipeline Orchestrator
 
-A lightweight, production-ready ML pipeline orchestrator that transforms your individual ML scripts into reliable, automated workflows. Built specifically for machine learning teams who need robust pipeline management without the complexity of Apache Airflow.
+A lightweight, ML pipeline orchestrator that transforms your individual ML scripts into reliable, automated workflows. Built specifically for robust Machine Learning pipeline management without the complexity of cloud systems.
 
 ## ✨ Key Features
 
